@@ -1,11 +1,15 @@
-FROM quay.io/fedora/fedora-bootc:latest@sha256:e12376f80d97814ebd3ca8c908ad4184ee08f526bea291230321a8db969d777b AS bootc
+FROM quay.io/fedora/fedora-bootc:latest@sha256:860bf88894a545eef250cb442c87d1491165975d2f5c1e65a19fde5d26801dd6 AS bootc
 
-FROM quay.io/fedora/fedora:latest@sha256:fe58517db6a40db0c8f7098139864258ca59fb6fdff18d0c2ae9fa4b36f88e5e
+FROM quay.io/fedora/fedora:latest@sha256:75bf3c17acf32fa40bd2323f8ea4eb241749627d8b14308a54925647d4bff1d3
 
 ENV USERNAME="ublue"
 
 COPY --from=bootc --chmod=0755 /usr/libexec/bootc-base-imagectl /usr/libexec/bootc-base-imagectl
 COPY --from=bootc /usr/share/doc/bootc-base-imagectl /usr/share/doc/
+
+COPY fedora-atomic.pub /staging/
+COPY fedora-atomic.yaml /staging/
+COPY policy.json /staging/
 
 RUN --mount=type=tmpfs,dst=/var \
     --mount=type=tmpfs,dst=/tmp \
@@ -32,6 +36,15 @@ dnf5 install -y \
     ublue-os-signing \
     yq \
     zstd
+
+# Copy files from the staging directory
+cp /staging/fedora-atomic.pub /etc/pki/containers/
+cp /staging/fedora-atomic.yaml /etc/containers/registries.d/
+cp /staging/policy.json /usr/etc/containers/policy.json
+cp /staging/policy.json /etc/containers/policy.json
+
+# Clean up the staging directory
+rm -rf /staging
 
 # syft
 curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/bin
@@ -65,8 +78,8 @@ RUNEOF
 LABEL \
     "name"="devcontainer" \
     "org.opencontainers.image.name"="devcontainer" \
-    "org.opencontainers.image.url"="https://github.com/ublue-os/devcontainer" \
-    "org.opencontainers.image.vendor"="Universal Blue" \
+    "org.opencontainers.image.url"="https://github.com/iitzrohan/devcontainer" \
+    "org.opencontainers.image.vendor"="iitzrohan" \
     "org.opencontainers.image.version"="base" \
-    "vendor"="Universal Blue" \
+    "vendor"="iitzrohan" \
     "version"="base"

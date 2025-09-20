@@ -2,7 +2,7 @@
 {
     "$schema": "https://raw.githubusercontent.com/devcontainers/spec/refs/heads/main/schemas/devContainer.schema.json",
     "name": "ublue-devcontainer",
-    "image": "ghcr.io/ublue-os/devcontainer:latest",
+    "image": "ghcr.io/iitzrohan/devcontainer:latest",
     "features": {
         // RPMs
         "./local-features/tools": {}
