@@ -6,7 +6,8 @@ on:
   merge_group:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * 0" # 0000 UTC Sunday
+    - cron: "00 4 * * 2" # 4:00 UTC Tuesday
+    - cron: "00 4 * * 6" # 4:00 UTC Saturday
 
 env:
   FQ_NAME: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}
@@ -52,7 +53,7 @@ jobs:
         id: build-titanoboa
         uses: devcontainers/ci@8bf61b26e9c3a98f69cb6ce2f88d24ff59b785c6 # v0.3
         with:
-          cacheFrom: ghcr.io/ublue-os/devcontainer:latest-${{ matrix.platform }}
+          cacheFrom: ghcr.io/iitzrohan/devcontainer:latest-${{ matrix.platform }}
           subFolder: ./src/titanoboa
           imageName: ${{ steps.name.outputs.FQ_NAME }}
           imageTag: titanoboa-${{ matrix.platform }}
@@ -94,6 +95,9 @@ jobs:
     if: contains(fromJson('["workflow_dispatch", "merge_group", "schedule"]'), github.event_name)
     needs: ["build"]
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -101,7 +105,7 @@ jobs:
           - latest
           - titanoboa
     container:
-      image: "ghcr.io/ublue-os/devcontainer:latest-x86_64@sha256:a91a9d33c3271ad55570c19e2b524fcf0006ec028dd68f730130e43c427db5ab"
+      image: "ghcr.io/iitzrohan/devcontainer:latest-x86_64@sha256:53947b2ee6444e110e1c36ef48cc3957c7bb041701f3d7140f4ece4f58671e90"
       options: "--privileged --volume /var/lib/containers:/var/lib/containers --security-opt seccomp=unconfined --security-opt label=disable --user 0:0"
     steps:
       - name: Image name
@@ -124,10 +128,10 @@ jobs:
           LABELS=(
             "name=${{ matrix.target == 'latest' && 'devcontainer' || 'titanoboa' }}"
             "org.opencontainers.image.name=devcontainer"
-            "org.opencontainers.image.url=https://github.com/ublue-os/devcontainer"
-            "org.opencontainers.image.vendor=Universal Blue"
+            "org.opencontainers.image.url=https://github.com/iitzrohan/devcontainer"
+            "org.opencontainers.image.vendor=iitzrohan"
             "org.opencontainers.image.version=${{ matrix.target == 'latest' && 'base' || 'titanoboa' }}"
-            "vendor=Universal Blue"
+            "vendor=iitzrohan"
             "version=${{ matrix.target == 'latest' && 'base' || 'titanoboa' }}"
           )
 

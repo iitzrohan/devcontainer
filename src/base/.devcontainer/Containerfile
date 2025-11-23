@@ -1,6 +1,6 @@
-FROM quay.io/fedora/fedora-bootc:latest@sha256:e12376f80d97814ebd3ca8c908ad4184ee08f526bea291230321a8db969d777b AS bootc
+FROM quay.io/fedora/fedora-bootc:latest AS bootc
 
-FROM quay.io/fedora/fedora:latest@sha256:fe58517db6a40db0c8f7098139864258ca59fb6fdff18d0c2ae9fa4b36f88e5e
+FROM quay.io/fedora/fedora:latest
 
 ENV USERNAME="ublue"
 
@@ -12,7 +12,7 @@ RUN --mount=type=tmpfs,dst=/var \
     bash <<'RUNEOF'
 set -eoux pipefail
 dnf5 config-manager setopt install_weak_deps=False
-dnf5 copr -y enable ublue-os/packages
+dnf5 copr -y enable iitzrohan/packages
 
 dnf5 install -y \
     ShellCheck \
@@ -29,7 +29,7 @@ dnf5 install -y \
     shfmt \
     socat \
     tmux \
-    ublue-os-signing \
+    atomic-os-signing \
     yq \
     zstd
 
@@ -58,15 +58,15 @@ macadam completion bash >/etc/bash_completion.d/macadam.sh
 chmod +x /usr/libexec/bootc-base-imagectl
 
 # Cleanup
-dnf5 copr -y disable ublue-os/packages
+dnf5 copr -y disable iitzrohan/packages
 dnf5 clean all
 RUNEOF
 
 LABEL \
     "name"="devcontainer" \
     "org.opencontainers.image.name"="devcontainer" \
-    "org.opencontainers.image.url"="https://github.com/ublue-os/devcontainer" \
-    "org.opencontainers.image.vendor"="Universal Blue" \
+    "org.opencontainers.image.url"="https://github.com/iitzrohan/devcontainer" \
+    "org.opencontainers.image.vendor"="iitzrohan" \
     "org.opencontainers.image.version"="base" \
-    "vendor"="Universal Blue" \
+    "vendor"="iitzrohan" \
     "version"="base"
